@@ -23,6 +23,12 @@ export default async function getWeatherByCity()
     await axios.get(`https://api.openweathermap.org/data/2.5/onecall?&lat=${location.coords.latitude}&lon=${location.coords.longitude}&exclude=minutely&appid=210bb5d80f56ca2086df3dd44c471818`)
     .then(response => {
       weatherPredictions = response.data
+      weatherPredictions.daily.map((value, index) => {
+
+      })
+      weatherPredictions.hourly.map((value, index) => {
+
+      })
     })
     .catch(error => {
       console.log(error)

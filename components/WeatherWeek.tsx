@@ -11,6 +11,8 @@ import {
 import Card from './Card'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import {images} from '../assets/ImagesManager';
+
 let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function filterWeatherData(data)
 {
@@ -21,6 +23,7 @@ function filterWeatherData(data)
         let icon = value['weather'][0]['icon']
         filterdArr.push([days[day.getDay()], temp, icon])
     })
+    filterdArr[0][0] = 'Today';
     return filterdArr
 }
 export default function WeatherWeek(props) {
@@ -45,7 +48,7 @@ export default function WeatherWeek(props) {
                         {
                         item.map((value, index) =>
                             index == 2 ?
-                            <Image key={index} source={{uri: 'http://openweathermap.org/img/wn/'+value+'@2x.png'}} style={{width: RFValue(50), height: RFValue(50)}}/>
+                            <Image key={index} source={images[`x${value}`].uri} style={{width: RFValue(30), height: RFValue(30)}}/>
                             :
                             <Text key={index} style={[styles.cell, styles.text, {color: 'black'}]}>{value}</Text>
                         )

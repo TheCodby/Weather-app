@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { StyleSheet,
   Text, 
   ScrollView, 
@@ -15,7 +15,9 @@ import { useFonts } from 'expo-font';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { RFValue } from "react-native-responsive-fontsize";
 import getWeatherByCity from './utils/getWeatherByCity'
+import * as SplashScreen from 'expo-splash-screen';
 import axios from 'axios';
+import * as Font from 'expo-font';
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -25,32 +27,40 @@ export default function App() {
   const [weatherData, setWeatherData] = useState(false);
   const [weatherPredictions, setWeatherPredictions] = useState(false);
   useEffect(() => {
-    const getAsyncInfo = async () => {
-      const result = await getWeatherByCity()
-      setWeatherData(result[0])
-      setWeatherPredictions(result[1])
+    const prepare = async () =>
+    {
+      try{
+        await SplashScreen.preventAutoHideAsync();
+        const result = await getWeatherByCity()
+        setWeatherData(result[0])
+        setWeatherPredictions(result[1])
+      }catch(e){
+        console.warn(e);
+      }finally{
+        setLoaded(true)
+      }
     }
-    getAsyncInfo()
+    prepare()
   }, [])  
-  if(fontLoaded & weatherData != false & weatherPredictions != false){
-    return (
-        <View style={styles.app}>
-          <View style={styles.section1}>
-            <Header data={weatherData} />
-          </View>
-          <View style={styles.section2}>
-            < WeatherToday data={weatherPredictions.hourly} weatherStatus={`Weather will be ${weatherPredictions.daily[0]['weather'][0]['description']} most of the day`} />
-            < WeatherWeek data={weatherPredictions.daily} />
-          </View>
-        </View>
-    );
-  }else{
-    return(
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Loading...</Text>
-      </View>
-    );
+  const onLayoutRootView = useCallback(async () => {
+    if(loaded && fontLoaded){
+      await SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+  if (!loaded || !fontLoaded) {
+    return null;
   }
+  return (
+      <View style={styles.app} onLayout={onLayoutRootView}>
+        <View style={styles.section1}>
+          <Header data={weatherData} />
+        </View>
+        <View style={styles.section2}>
+          < WeatherToday data={weatherPredictions.hourly} weatherStatus={`Weather will be ${weatherPredictions.daily[0]['weather'][0]['description']} most of the day`} />
+          < WeatherWeek data={weatherPredictions.daily} />
+        </View>
+      </View>
+  );
 }
 
 const styles = StyleSheet.create({
