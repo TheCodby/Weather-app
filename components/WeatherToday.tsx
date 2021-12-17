@@ -10,6 +10,8 @@ import {
 import Card from './Card'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { RFValue } from "react-native-responsive-fontsize";
+import {images} from '../assets/ImagesManager';
+
 export default function WeatherToday(props) {
     const weatherData = props.data.slice(0, 24)
     return(
@@ -28,7 +30,7 @@ export default function WeatherToday(props) {
                     <Card style={styles.weatherCard} key={index}>
                         <Text style={[styles.text, {color: 'black', fontWeight: 'bold'}]}>
                             {new Date(value['dt'] * 1000).toISOString().substr(11, 5)}</Text>
-                        <Image source={{uri: 'http://openweathermap.org/img/wn/'+value['weather'][0]['icon']+'@2x.png'}} style={{width: RFValue(50), height: RFValue(50)}}/>
+                        <Image source={images[`x${value['weather'][0]['icon']}`].uri} style={{width: RFValue(30), height: RFValue(30)}}/>
                         <Text style={[styles.text, {color: 'black'}]}>{Math.round(value['temp'] - 273)}°C</Text>
                     </Card>
                 )
